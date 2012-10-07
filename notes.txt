@@ -1,0 +1,94 @@
+1. radio.c
+  piggy100: adding last item to enable AT_IRQ_CCA_ED_DONE interupt 
+  piggy101: set callback handler for ED
+  piggy102: declare in header so that noiseprobe can use functions
+  piggy103a: callback handler for Energy Detection
+  piggy103b: calls NF if manual ED measurement is finished
+  piggy103c: state for ED
+  
+2. IEEE802154E.h
+  piggy201: NF states
+  piggy202: Noise Floor Probe activities
+  piggy203: payload manip
+  piggy204: allow 2 extra bytes for mask
+  
+3. IEEE802154E.c
+  piggy300: temp vars
+  piggy301a: state vars for blacklisting
+  piggy301b: init state vars for blacklisting
+  - piggy302a: function to validate upstream BL updates
+  - piggy302b: validate RPT too
+  piggy303: noise floor activities invoked by timers
+  piggy304: only start storm app when first synchronised
+  piggy305: module-wide equivalent to hold the addr of other end
+  piggy306a: set the mask to use based on what kind of neighbour we will send to
+  piggy306b: set the mask to use based on what kind of neighbour we will hear from 
+  piggy307a: entering NF slots
+  piggy307b: triggered NF NF probe activities
+  - piggy308: whether wait for ACK of RPT
+  piggy309:  diables retransmission - if no ACK received, just move on to next one
+  piggy310: update parent's mask record from a valid ADV from parent 
+  - piggy311a: read sender's mask update if this is BLKA pkt
+  - piggy311b: read children's mask report from their BLKA pkts
+  piggy312a: manipulate received payload if data
+  piggy312b: manipulate received payload if data
+  piggy313: insert local_mask to ADV
+  piggy314: check blacklist and generate new channel if neccessary
+  piggy315: come up with next usable channel
+  - piggy316a: apply upstream temp mask
+  piggy316b: apply downstream temp mask
+  piggy317a: manipulate outgoing payload if from BBK
+  piggy317b: manipulate outgoing payload if from BBK
+  
+  
+4. IEEE802154.h
+  - piggy401: upstream BL update type
+  
+5. res.c
+  - piggy501: builds upstream BL reports
+  piggy502: only apply Rx mask after a RES packet is sent
+  - piggy503: only apply Tx mask after sent RPT
+
+6. res.h
+  piggy601: rpt struct
+  
+  <to add temp apply stuff>
+  
+7. neighbor.h
+  piggy701: neighbour's channel mask
+  piggy702: get own parent addr
+  piggy703: channel mask at the neighbour
+  
+8. neighbor.c
+  The graph relies on DAGroot as only after synchronised with DAGroot can 2nd-level motes start sending ADVs.
+
+  piggy801a: retrieve neighbour's channel mask
+  piggy801b: set mask record of a neighbour
+  piggy802: get own parent addr
+  piggy803: init neighbour channel records
+  piggy804: static gateway
+  piggy805: static routing (parent)
+  piggy806: use manually set static routing
+
+  
+9. schedule
+  piggy901: cell type for noise floor listening
+  piggy902: addr-specific schedule
+  piggy903: only enable blacklisting in non-DAGroot motes
+  
+  
+10. openudp.c
+  piggy1001: call hdl if it sees incoming requests
+  
+  
+ 
+  piggy7:   decides whether to listen for an ACK
+  piggy8:   desabling response to Ack requests
+  d - piggy9:   insert custom payload
+  piggy14:  (in pair) check if need to send ACK
+  piggy24:  store the record of children's mask from BLKA pkts
+  d - piggy32: check RPT packet first
+  d - piggy33b:  only apply temp mask after a RES packet is sent (ADV or whatever in future)
+  d - piggy34:  local_t_mask update from noiseprobe module (comment together with sendUp to disable BL)
+  piggy38a: insert local_t_mask into outgoing ACK (p-2-m) - (not temp mask in case this ACK is sent before the ADV)
+  piggy38b: read parent's mask from ACK
