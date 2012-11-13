@@ -2119,9 +2119,6 @@
         <name>$PROJ_DIR$\..\..\..\openwsn\02b-MAChigh\schedule.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\openwsn\02b-MAChigh\schedule_lists.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\..\openwsn\02b-MAChigh\ses.c</name>
       </file>
       <file>

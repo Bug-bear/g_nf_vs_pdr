@@ -52,9 +52,19 @@ void list_init(uint8_t NODE_ID) {
          FALSE,
          0,
          &temp_neighbor);
-      
+   
+    switch(NODE_ID){
+    case DEBUG_MOTEID_MASTER:
+        node01();
+        break;
+    case DEBUG_MOTEID_2:
+        node02();
+        break;
+    default:
+        break;
+   }
    //build id-specific slots
-   node[NODE_ID-1]();
+   //node[NODE_ID-1]();
    
    //build invariant slots again (ADV, SER, NF, DIO)
    
@@ -77,26 +87,6 @@ void list_init(uint8_t NODE_ID) {
          &temp_neighbor);
    
    // Noise Floor Probe
-   /* piggy903: only enable blacklisting in non-DAGroot motes 
-   if(NODE_ID==DEBUG_MOTEID_MASTER){
-   i = 6; 
-   memset(&temp_neighbor,0,sizeof(temp_neighbor));
-   schedule_addActiveSlot(i,
-         CELLTYPE_SERIALRX,
-         FALSE,
-         0,
-         &temp_neighbor);
-   
-   i = 7; 
-   memset(&temp_neighbor,0,sizeof(temp_neighbor));
-   schedule_addActiveSlot(i,
-         CELLTYPE_MORESERIALRX,
-         FALSE,
-         0,
-         &temp_neighbor);
-   }
-   else */
-   {
    i = 6; 
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
    schedule_addActiveSlot(i,
@@ -112,7 +102,6 @@ void list_init(uint8_t NODE_ID) {
          FALSE,
          0,
          &temp_neighbor);
-   }
    
    //for RPL DIOs?
    i = 8;
@@ -132,7 +121,7 @@ void list_init(uint8_t NODE_ID) {
          0,
          &temp_neighbor);
    
-   // slot 9 is SERIALRX
+   /*// slot 9 is SERIALRX
    i = 9;
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
    schedule_addActiveSlot(i,
@@ -140,6 +129,7 @@ void list_init(uint8_t NODE_ID) {
          FALSE,
          0,
          &temp_neighbor);
+   */
 }
 
 //DAGroot
@@ -162,25 +152,19 @@ void node01(){
    // slot 2 is shared TXRX, but with specific neighbour rather than anycast
    i = 2;
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
-   temp_neighbor.type             = ADDR_64B;
-   temp_neighbor.addr_64b[6]    = 0xED;
-   temp_neighbor.addr_64b[7]    = DEBUG_MOTEID_3;
    schedule_addActiveSlot(i,
-         CELLTYPE_TXRX,
+         CELLTYPE_MORESERIALRX,
          FALSE,
          0,
-         &temp_neighbor);   
+         &temp_neighbor); 
    
    i = 3;
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
-   temp_neighbor.type             = ADDR_64B;
-   temp_neighbor.addr_64b[6]    = 0xED;
-   temp_neighbor.addr_64b[7]    = DEBUG_MOTEID_4;
    schedule_addActiveSlot(i,
-         CELLTYPE_TXRX,
+         CELLTYPE_MORESERIALRX,
          FALSE,
          0,
-         &temp_neighbor);  
+         &temp_neighbor);
 }
 
 void node02(){
@@ -201,25 +185,19 @@ void node02(){
  
    i = 2;
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
-   temp_neighbor.type             = ADDR_64B;
-   temp_neighbor.addr_64b[6]    = 0xED;
-   temp_neighbor.addr_64b[7]    = DEBUG_MOTEID_5;
    schedule_addActiveSlot(i,
-         CELLTYPE_TXRX,
+         CELLTYPE_MORESERIALRX,
          FALSE,
          0,
-         &temp_neighbor);     
+         &temp_neighbor);
 
    i = 3;
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
-   temp_neighbor.type             = ADDR_64B;
-   temp_neighbor.addr_64b[6]    = 0xED;
-   temp_neighbor.addr_64b[7]    = DEBUG_MOTEID_6;
    schedule_addActiveSlot(i,
-         CELLTYPE_TXRX,
+         CELLTYPE_MORESERIALRX,
          FALSE,
          0,
-         &temp_neighbor);   
+         &temp_neighbor); 
 }
 
 void node03(){

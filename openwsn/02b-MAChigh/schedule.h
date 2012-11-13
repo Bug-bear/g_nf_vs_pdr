@@ -12,7 +12,7 @@
 
 //=========================== define ==========================================
 
-#define MAXACTIVESLOTS  10    // the maximum number of active slots
+#define MAXACTIVESLOTS  9    // the maximum number of active slots
 #define MINBE           2    // min backoff exponent, used in shared TX slots
 #define MAXBE           4    // max backoff exponent, used in shared TX slots
 

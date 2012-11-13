@@ -21,12 +21,18 @@ static const uint8_t infoStackName[] = "OpenWSN ";
 #define OPENWSN_VERSION_PATCH 1
 
 // enter the last byte of your mote's address if you want it to be an LBR
-//#define DEBUG_MOTEID_MASTER 0xc5
-//#define DEBUG_MOTEID_1      0xd3
-
 // 0xED
+
+#define DEBUG_MOTEID_MASTER DEBUG_MOTEID_10 
+#define DEBUG_MOTEID_2      0xc5
+
+/*
 #define DEBUG_MOTEID_MASTER 0x01 
 #define DEBUG_MOTEID_2      0x02
+*/
+/* below are useless for sniffer */
+#define DEBUG_MOTEID_1      0x01 
+//#define DEBUG_MOTEID_2      0xc5
 #define DEBUG_MOTEID_3      0x03
 #define DEBUG_MOTEID_4      0x04
 #define DEBUG_MOTEID_5      0x05
@@ -34,8 +40,7 @@ static const uint8_t infoStackName[] = "OpenWSN ";
 #define DEBUG_MOTEID_7      0x07
 #define DEBUG_MOTEID_8      0x08
 #define DEBUG_MOTEID_9      0x09
-#define DEBUG_MOTEID_10     0x10
-
+#define DEBUG_MOTEID_10     0x0a
 
 #ifndef TRUE
 #define TRUE 1

@@ -2,5 +2,24 @@ projects/*
 !projects/common
 !projects/gina
 
+
+projects/gina/00std_eui64
+projects/gina/00std_eui64/Debug
+projects/gina/00std_eui64/Release
+projects/gina/00std_eui64/Settings
+
+projects/gina/03oos_openwsn/Debug
+projects/gina/03oos_openwsn/Settings
+
+projects/gina/03oos_openwsn_alt/Debug
+projects/gina/03oos_openwsn_alt/Settings
+
 .svn/
 *.dep
+*.pbi
+*.pbd
+*.wsdt
+*.html
+*.d43
+*.r43
+*.dni

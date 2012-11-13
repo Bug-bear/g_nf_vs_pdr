@@ -35,24 +35,6 @@ void schedule_resetEntry(scheduleEntry_t* pScheduleEntry);
 /* piggy902: addr-specific schedule */ 
 void schedule_init() {
    uint8_t     i;
-
-   // reset local variables
-   memset(&schedule_vars,0,sizeof(schedule_vars_t));
-   memset(&schedule_dbg, 0,sizeof(schedule_dbg_t));
-   for (i=0;i<MAXACTIVESLOTS;i++){
-      schedule_resetEntry(&schedule_vars.scheduleBuf[i]);
-   }
-
-   // set frame length
-   schedule_setFrameLength(11); //why must this be odd number?
-   
-   // construct schedule in separate module 
-   list_init(idmanager_getMyID(ADDR_16B)->addr_16b[1]); 
-}
-
-/*
-void schedule_init() {
-   uint8_t     i;
    open_addr_t temp_neighbor;
 
    // reset local variables
@@ -63,7 +45,7 @@ void schedule_init() {
    }
 
    // set frame length
-   schedule_setFrameLength(9);
+   schedule_setFrameLength(11);
 
    // slot 0 is advertisement slot
    i = 0;
@@ -73,19 +55,75 @@ void schedule_init() {
          FALSE,
          0,
          &temp_neighbor);
-
-   // slot 1 is shared TXRX anycast
-   i = 1;
-   memset(&temp_neighbor,0,sizeof(temp_neighbor));
-   temp_neighbor.type             = ADDR_ANYCAST;
-   schedule_addActiveSlot(i,
-         CELLTYPE_TXRX,
-         TRUE,
-         0,
-         &temp_neighbor);
-
-   // slot 2 is SERIALRX
-   i = 2;
+   
+    switch(idmanager_getMyID(ADDR_16B)->addr_16b[1]){
+    case DEBUG_MOTEID_MASTER:
+       // slot 1 is shared TXRX, but with specific neighbour rather than anycast
+       i = 1;
+       memset(&temp_neighbor,0,sizeof(temp_neighbor));
+       temp_neighbor.type             = ADDR_64B;
+       temp_neighbor.addr_64b[6]    = 0xED;
+       temp_neighbor.addr_64b[7]    = DEBUG_MOTEID_2;
+       schedule_addActiveSlot(i,
+             CELLTYPE_TXRX,
+             FALSE,
+             0,
+             &temp_neighbor);
+       
+       // slot 2 is shared TXRX, but with specific neighbour rather than anycast
+       i = 2;
+       memset(&temp_neighbor,0,sizeof(temp_neighbor));
+       schedule_addActiveSlot(i,
+             CELLTYPE_MORESERIALRX,
+             FALSE,
+             0,
+             &temp_neighbor); 
+       
+       i = 3;
+       memset(&temp_neighbor,0,sizeof(temp_neighbor));
+       schedule_addActiveSlot(i,
+             CELLTYPE_MORESERIALRX,
+             FALSE,
+             0,
+             &temp_neighbor);
+        break;
+        
+    case DEBUG_MOTEID_2:
+       // slot 1 is shared TXRX, but with specific neighbour rather than anycast
+       i = 1;
+       memset(&temp_neighbor,0,sizeof(temp_neighbor));
+       temp_neighbor.type             = ADDR_64B;
+       temp_neighbor.addr_64b[6]    = 0xED;
+       temp_neighbor.addr_64b[7]    = DEBUG_MOTEID_MASTER;
+       schedule_addActiveSlot(i,
+             CELLTYPE_TXRX,
+             FALSE,
+             0,
+             &temp_neighbor);
+     
+       i = 2;
+       memset(&temp_neighbor,0,sizeof(temp_neighbor));
+       schedule_addActiveSlot(i,
+             CELLTYPE_MORESERIALRX,
+             FALSE,
+             0,
+             &temp_neighbor);
+    
+       i = 3;
+       memset(&temp_neighbor,0,sizeof(temp_neighbor));
+       schedule_addActiveSlot(i,
+             CELLTYPE_MORESERIALRX,
+             FALSE,
+             0,
+             &temp_neighbor); 
+        break;
+        
+    default:
+        break;
+   }
+   
+   // slot 4 is SERIALRX
+   i = 4;
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
    schedule_addActiveSlot(i,
          CELLTYPE_SERIALRX,
@@ -93,25 +131,51 @@ void schedule_init() {
          0,
          &temp_neighbor);
 
-   // slot 3 is MORESERIALRX
-   i = 3;
+   // slot 5 is MORESERIALRX
+   i = 5;
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
    schedule_addActiveSlot(i,
          CELLTYPE_MORESERIALRX,
          FALSE,
          0,
          &temp_neighbor);
-
-   // slot 4 is MORESERIALRX
-   i = 4;
+   
+   // Noise Floor Probe
+   i = 6; 
    memset(&temp_neighbor,0,sizeof(temp_neighbor));
    schedule_addActiveSlot(i,
-         CELLTYPE_MORESERIALRX,
+         CELLTYPE_NF,
+         FALSE,
+         0,
+         &temp_neighbor);
+   
+   i = 7; 
+   memset(&temp_neighbor,0,sizeof(temp_neighbor));
+   schedule_addActiveSlot(i,
+         CELLTYPE_NF,
+         FALSE,
+         0,
+         &temp_neighbor);
+   
+   //for RPL DIOs?
+   i = 8;
+   memset(&temp_neighbor,0,sizeof(temp_neighbor));
+   temp_neighbor.type             = ADDR_64B;
+   temp_neighbor.addr_64b[0]          = 0xff;
+   temp_neighbor.addr_64b[1]          = 0xff;
+   temp_neighbor.addr_64b[2]          = 0xff;
+   temp_neighbor.addr_64b[3]          = 0xff;
+   temp_neighbor.addr_64b[4]          = 0xff;
+   temp_neighbor.addr_64b[5]          = 0xff;
+   temp_neighbor.addr_64b[6]          = 0xff;
+   temp_neighbor.addr_64b[7]          = 0xff;
+   schedule_addActiveSlot(i,
+         CELLTYPE_TXRX,
          FALSE,
          0,
          &temp_neighbor);
 }
-*/ 
+
 
 bool debugPrint_schedule() {
    debugScheduleEntry_t temp;

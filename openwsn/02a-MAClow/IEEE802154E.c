@@ -93,6 +93,13 @@ uint16_t local_RxMask = 0xFFFF;
 
 uint8_t FREQUENCY = 26;
 uint64_t START = 0;
+
+int8_t  lastByte4 = 0;
+int16_t lastBytes2and3 = 0;
+int16_t lastBytes0and1 = 0;
+int8_t  tempByte4 = 0;
+int16_t tempBytes2and3 = 0;
+int16_t tempBytes0and1 = 0;
 //=========================== prototypes ======================================
 
 // SYNCHRONIZING
@@ -1598,19 +1605,30 @@ port_INLINE void incrementAsnOffset() {
 	 //  printf("SlotOffset %d \n", ieee154e_vars.slotOffset);
    }
    
-   /* poiiop for round robin frequency */
+   /* poiiop for round robin frequency 
    ieee154e_vars.slots  = ieee154e_vars.asn.byte4*(2^32)
                      + ieee154e_vars.asn.bytes2and3*(2^16)
-                      + ieee154e_vars.asn.bytes0and1;
+                      + ieee154e_vars.asn.bytes0and1;*/
    
-   if(((int)(ieee154e_vars.slots-ieee154e_vars.lastSlot))==6820) 
+   tempByte4 = (int8_t)ieee154e_vars.asn.byte4;
+   tempBytes2and3 = (int16_t)ieee154e_vars.asn.bytes2and3;
+   tempBytes0and1 = (int16_t)ieee154e_vars.asn.bytes0and1;
+   
+   int16_t diff = (tempByte4-lastByte4)*(2^32) + (tempBytes2and3 - lastBytes2and3)*(2^16) + (tempBytes0and1 - lastBytes0and1);
+   
+   if(diff==6820)
+   //if(((int)(ieee154e_vars.slots-ieee154e_vars.lastSlot))==6820) 
+   //if(((int)(ieee154e_vars.slots-ieee154e_vars.lastSlot))==7590) 
    //if((ieee154e_vars.slots)%6820 == 0) //for 100 pkts at 1Hz - unexplained overflow
    //if(ieee154e_vars.slots%1332 == 0) //for 16 pkts at 1Hz
    {
      if(idmanager_getIsDAGroot()==FALSE) singleChanStop();
      FREQUENCY = 11+(FREQUENCY-11+1)%16;
      if(idmanager_getIsDAGroot()==FALSE) singleChanResume();
-     ieee154e_vars.lastSlot = ieee154e_vars.slots;
+     //ieee154e_vars.lastSlot = ieee154e_vars.slots;
+     lastByte4 = tempByte4;
+     lastBytes2and3 = tempBytes2and3;
+     lastBytes0and1 = tempBytes0and1;
    }
 }
 
@@ -2007,11 +2025,11 @@ void handleRecvPkt(OpenQueueEntry_t* pkt){
   //only alter payload of APP layer pkts
   if((ieee154e_vars.dataReceived->l2_frameType==IEEE154_TYPE_DATA)&&(((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->start==0xED))
   {
-      
+      /*
       memcpy(&(((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->asn[0]),(uint8_t*)(&(ieee154e_vars.asn.byte4)),sizeof(uint8_t));
       memcpy(&(((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->asn[1]),(uint8_t*)(&(ieee154e_vars.asn.bytes2and3)),sizeof(uint16_t));
       memcpy(&(((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->asn[3]),(uint8_t*)(&(ieee154e_vars.asn.bytes0and1)),sizeof(uint16_t));
-      
+      */
     
       //((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->rssi = pkt->l1_rssi;
       
@@ -2048,6 +2066,10 @@ void insertOutgoing(OpenQueueEntry_t* pkt){
     case IEEE154_TYPE_DATA:
       if((pkt->creator==COMPONENT_BBK))
       {       
+      memcpy(&(((demo_t*)(pkt->payload + pkt->length -2 - sizeof(demo_t)))->asn[0]),(uint8_t*)(&(ieee154e_vars.asn.byte4)),sizeof(uint8_t));
+      memcpy(&(((demo_t*)(pkt->payload + pkt->length -2 - sizeof(demo_t)))->asn[1]),(uint8_t*)(&(ieee154e_vars.asn.bytes2and3)),sizeof(uint16_t));
+      memcpy(&(((demo_t*)(pkt->payload + pkt->length -2 - sizeof(demo_t)))->asn[3]),(uint8_t*)(&(ieee154e_vars.asn.bytes0and1)),sizeof(uint16_t));        
+        
       //((demo_t*)(pkt->payload + pkt->length -2 - sizeof(demo_t)))->sent.pos[0] = (uint8_t)((parentM & 0xff00)>>8);
       //((demo_t*)(pkt->payload + pkt->length -2 - sizeof(demo_t)))->sent.pos[1] = (uint8_t)((parentM & 0x00ff)>>0);
 
