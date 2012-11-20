@@ -2031,7 +2031,7 @@ void handleRecvPkt(OpenQueueEntry_t* pkt){
       memcpy(&(((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->asn[3]),(uint8_t*)(&(ieee154e_vars.asn.bytes0and1)),sizeof(uint16_t));
       */
     
-      //((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->rssi = pkt->l1_rssi;
+      ((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->retry = pkt->l1_rssi;
       
       ((demo_t*)(pkt->payload + pkt->length - sizeof(demo_t)))->channel = ieee154e_vars.freq;
       
